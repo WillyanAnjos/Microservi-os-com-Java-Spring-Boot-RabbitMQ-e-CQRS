@@ -1,0 +1,47 @@
+services:
+  postgres-beautique:
+    image: postgres
+    hostname: postgres-beautique
+    environment:
+      POSTGRES_USER: beautique
+      POSTGRES_PASSWORD: beautique
+      POSTGRES_DB: beautique
+    ports:
+      - "3334:5432"
+    volumes:
+      - '/Users/willyananjos/Desktop/db-beautique:/var/lib/postgresql/data'
+      - './init-beautique-schema.sql:/docker-entrypoint-initdb.d/init-beautique-schema.sql'
+    networks:
+      - beautique-network
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - beautique-network
+    volumes:
+      - '/Users/willyananjos/Desktop/rabbitmq-data:/var/lib/rabbitmq'
+      - '/Users/willyananjos/Desktop/rabbitmq-log:/var/log/rabbitmq'
+    
+  mongodb:
+    image: mongo:latest
+    hostname: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: mongopassword
+    volumes:
+      - '/Users/willyananjos/Desktop/db-mongodb:/data/db'
+      - './mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh'
+    ports:
+      - "27017:27017"
+    networks:
+      - beautique-network
+
+networks:
+  beautique-network:
+    driver: bridge
